@@ -46,13 +46,3 @@ function EditarProdutoPorCodigo($nome, $CategoriaProduto, $DescriProduto, $image
     if (!$resultado){die ('Erro ao atualizar os produtos'. mysqli_error($cnx)); }
 return 'Atualizados com sucesso!'; 
 }
-
-function MostrarProdutoPorNome($nome){
-    $sql = "select * from produto where upper(nome) like upper('%".$nome."%')";
-    $result = mysqli_query(conn(), $sql);
-    while($linha = mysqli_fetch_assoc($result)){
-        $produtos[] = $linha;
-    }
-    
-    return $produtos;
-}
