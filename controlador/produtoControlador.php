@@ -2,7 +2,7 @@
 require_once "modelo/produtoModelo.php";
 require_once "modelo/categoriaModelo.php";
 require_once "servico/validacaoServico.php";
-require_once "servico/uploadServico.php";
+
 
 function index() {
     redirecionar("produto/listar");
@@ -13,10 +13,7 @@ function adicionar() {
         $nome = $_POST["NomeProduto"];
         $CategoriaProduto = $_POST["CategoriaProduto"];
         $DescriProduto = $_POST["DescriProduto"];
-        $temp_imagem = $_FILES['imagem']['tmp_name'];
-        $name_imagem = $_FILES['imagem']['name'];
-        $imagem = upload($temp_imagem,$name_imagem);
-        echo "<img src='$imagem'>";
+        $imagem= $_POST["imagem"];
         $PreProduto = $_POST["PreProduto"];
         $estoqueMin = $_POST["eMin"];
         $estoqueMax = $_POST["eMax"];
@@ -40,16 +37,16 @@ function adicionar() {
         if (tipo_Especifico($estoqueMax, "estoqueMax") != NULL) {
             $errors[] = tipo_Especifico($estoqueMax, "estoqueMax");
         }
-            if (count($errors) > 0) {
-               $dados = array();
-               $dados["errors"] = $errors;
-               $dados["categorias"] = seleciona_todas_as_categorias();
-               exibir("produtos/formulario", $dados);
-           }else{              
-           $msg = adicionarProduto($nome, $CategoriaProduto, $DescriProduto, $imagem, $PreProduto, $estoqueMin, $estoqueMax);
-           echo $msg;
-
-           }
+         if (count($errors) > 0) {
+            $dados = array();
+            $dados["errors"] = $errors;
+             $dados["categorias"] = seleciona_todas_as_categorias();
+            exibir("produtos/formulario", $dados);
+        }else{              
+        $msg = adicionarProduto($nome, $CategoriaProduto, $DescriProduto, $imagem, $PreProduto, $estoqueMin, $estoqueMax);
+        echo $msg;
+        
+        }
   
     } else {
         $dados["categorias"] = seleciona_todas_as_categorias();
@@ -72,7 +69,7 @@ function deletar($id) {
 
 function editar ($cod){
     if(ehPost()){
-       $nome = $_POST["NomeProduto"];
+        $nome = $_POST["NomeProduto"];
         $CategoriaProduto = $_POST["CategoriaProduto"];
         $DescriProduto = $_POST["DescriProduto"];
         $imagem= $_POST["imagem"];
@@ -89,40 +86,3 @@ function editar ($cod){
     }
     
 }
-
-function comprar($idprod){
-   // unset($_SESSION["carrinho"]); //p apagar sessão
-    if(isset($_SESSION["carrinho"])) {
-    $produtos = $_SESSION["carrinho"]; 
-    } else {
-        $produtos = array();
-    }
-
-    $produtos[] = $idprod;
-    $_SESSION["carrinho"] = $produtos;
-
-   redirecionar("car/mostrar"); 
-}
-
-function buscar(){
-    if (ehPost()) {
-        $nome = $_POST["nome"];
-        $dados = array();
-        $dados["produtos"] = MostrarProdutoPorNome($nome);
-        exibir('produtos/listar', $dados);
-    } else {
-        exibir('produtos/listar', $dados);
-    }
-}
-
-/*function test(){
-    if(isset($_SESSION["mensagem"])){
-        $frase = $_SESSION["mensagem"];
-    } else {
-        $frase = array();
-    }
-    
-    $frase["uhuu"] = "YOU LEARNED :)";
-    $dados["frase"] = $frase;
-    exibir("login/index", $dados);
-}*/
